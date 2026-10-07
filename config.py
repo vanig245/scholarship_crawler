@@ -7,6 +7,8 @@ MAX_HUBS = 20
 MAX_LINKS_PER_HUB = 15
 SOON_DAYS = 30
 VERIFIED_THRESHOLD = 95.0
+MAX_PAGES = 200
+MAX_DEPTH = 2
 
 OFFICIAL_SUFFIXES = {
     ".gov.in": "GOVERNMENT", ".nic.in": "GOVERNMENT",
@@ -34,14 +36,18 @@ SEEDS = [
 ]
 
 QUERIES = [
-    "scholarship for Indian students apply last date 2026-27 site:gov.in",
-    "scholarship 2026-27 eligibility apply site:ac.in",
-    "post matric scholarship SC ST OBC 2026-27 apply official",
-    "scholarship for girl students India 2026 official application",
-    "minority students scholarship 2026-27 official notification",
-    "CSR scholarship programme India undergraduate students apply 2026",
-    "foundation scholarship India meritorious students application 2026",
-    "trust scholarship India students apply online 2026",
-    "PhD fellowship India 2026 apply official",
-    "engineering students scholarship India 2026 AICTE",
+    "scholarship India students apply 2026 site:gov.in",
+    "scholarship site:ac.in apply eligibility 2026",
+    "post matric scholarship SC ST OBC apply",
+    "girl students scholarship India apply 2026",
+    "minority scholarship India notification 2026",
+    "CSR scholarship India students apply",
+    "foundation scholarship India students apply",
+    "trust scholarship India students apply online",
+    "PhD fellowship India apply",
+    "AICTE scholarship engineering students",
+    "Reliance Foundation scholarships apply",
+    "HDFC Parivartan ECSS scholarship",
+    "Aditya Birla scholarship apply",
+    "Infosys Foundation scholarship apply",
 ]

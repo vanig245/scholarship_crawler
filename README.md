@@ -2,8 +2,6 @@
 
 An automated, evidence-first crawler that discovers scholarships for Indian students, extracts them into a structured schema, verifies them against official sources, scores each record with a transparent methodology, and tracks changes over time.
 
-Built for the **Edxso AI Engineer Intern, Assignment 2** (Atlas Funding repository engine).
-
 > **Design principle:** accuracy over quantity. Every stored field is backed by a verbatim quote from the fetched page. If the source does not say it, the system stores `Not specified`. It never fills a gap with a guess.
 
 ---
@@ -155,39 +153,6 @@ python-dateutil
 fastapi
 uvicorn
 ```
-
-Before the first crawl, set a real contact address in `config.py` so website operators can reach you:
-
-```python
-USER_AGENT = "AtlasScholarshipBot/0.1 (educational assignment; contact: you@example.com)"
-```
-
----
-
-## 6. Usage
-
-All commands run from the project root with the virtual environment active.
-
-| Command | What it does |
-|---|---|
-| `python3 run.py init` | Create the database and tables |
-| `python3 run.py crawl` | Full run: discover, fetch, extract, verify, score, store, update |
-| `python3 run.py simulate-change` | Demo helper: rewinds 2 stored deadlines to mimic a previous crawl state |
-| `python3 run.py simulate-removal` | Demo helper: points 2 records at a non-existent page |
-| `python3 run.py export` | Writes CSV files into `data/` |
-| `python3 debug_url.py <url>` | Shows why a single URL was accepted or rejected |
-| `uvicorn app.main:app --reload` | Starts the API and dashboard at `http://127.0.0.1:8000` |
-
-To start fresh:
-
-```bash
-rm data/scholarships.db
-python3 run.py init
-python3 run.py crawl
-```
-
-A crawl takes several minutes because the crawler waits between requests to the same domain.
-
 ---
 
 ## 7. How each stage works
@@ -400,32 +365,6 @@ The dashboard shows summary cards, a filterable table, and a detail view with el
 
 ---
 
-## 13. Configuration
-
-Edit `config.py`:
-
-| Setting | Default | Meaning |
-|---|---|---|
-| `DB_PATH` | `data/scholarships.db` | Database location |
-| `USER_AGENT` | bot string | Identify your crawler; include a contact email |
-| `REQUEST_TIMEOUT` | 20 | Seconds per request |
-| `CRAWL_DELAY_SECONDS` | 1.5 | Delay between requests to one domain |
-| `MAX_CANDIDATES` | 100 | Cap on initial candidate URLs |
-| `MAX_HUBS` | 20 | Hub pages expanded during discovery |
-| `MAX_LINKS_PER_HUB` | 15 | Links followed per hub |
-| `MAX_PAGES` | 200 | Hard cap on pages per run |
-| `MAX_DEPTH` | 2 | How many levels deep to follow listing pages |
-| `SOON_DAYS` | 30 | Window for `EXPIRING_SOON` |
-| `VERIFIED_THRESHOLD` | 95.0 | Minimum score for `VERIFIED` |
-| `SEEDS` | list | Starting pages |
-| `QUERIES` | list | Discovery search queries |
-| `OFFICIAL_SUFFIXES` | map | Domain suffix to source type |
-| `AGGREGATOR_DOMAINS` | set | Known aggregators (discovery only) |
-
-To improve coverage, add more `QUERIES` (specific provider names work best) and `SEEDS`.
-
----
-
 ## 14. Demo walkthrough
 
 Suggested order for the screen recording:
@@ -471,20 +410,6 @@ print('expired / unverifiable:', q(\"select count(*) from scholarships where sta
 
 You can also open `data/scholarships.db` in VS Code with the **SQLite Viewer** extension.
 
-### Results snapshot
-
-Fill this in from your final run before submitting.
-
-| Metric | Required | Achieved |
-|---|---|---|
-| Real scholarship records | 20+ | _ |
-| Verified against official sources | 15+ | _ |
-| Confidence at or above 95% | 10+ | _ |
-| Distinct source types | 3+ | _ |
-| Change detection examples | 2+ | _ |
-| Expired / stale examples | 2+ | _ |
-
----
 
 ## 16. Troubleshooting
 
@@ -501,63 +426,8 @@ Fill this in from your final run before submitting.
 
 ---
 
-## 17. Limitations
 
-Stated plainly, because the assignment penalises claims about things not built:
 
-- **One record per page.** Pages that list many scholarships are used for link discovery only, not split into multiple records.
-- **No PDF parsing.** Many official notifications are PDFs; these are skipped.
-- **No JavaScript rendering.** Pages that build content in the browser may return little text. Playwright would address this.
-- **Rule-based extraction.** Regular expressions cover common phrasing but miss unusual wording, and multilingual pages (for example Hindi) are not handled.
-- **Official-source detection for non-government providers is heuristic.** The "page identifies itself as the domain's organisation" test is conservative but not infallible, so non-government records carry a 0.85 trust factor.
-- **Search discovery depends on a free search endpoint** that can rate-limit or return nothing for some queries.
-- **Coverage is not exhaustive.** The system finds what its seeds, queries and link expansion reach. It is not a complete census of Indian scholarships.
-- **Records need human spot-checking.** Open the official source and confirm the quotes before relying on any record.
-
----
-
-## 18. Roadmap
-
-- Playwright fallback for JavaScript-rendered pages
-- PDF text extraction (`pypdf`) for official notifications
-- Optional local LLM (Ollama) as a *second extractor*, with its output accepted only if the quoted evidence passes the same verbatim gate, and with cross-extractor agreement as an additional score check
-- Splitting listing pages into multiple scholarship records
-- Scheduled runs (cron or GitHub Actions) and a crawl-run history view
-- Hindi and regional-language support
-- Eligibility-matching endpoint: given a student profile, return matching scholarships using `eligibility_json`
-
----
-
-## 19. Ethics and responsible crawling
-
-- Respects `robots.txt` and skips disallowed URLs
-- Rate-limits requests per domain
-- Identifies itself with a descriptive User-Agent and contact address
-- Collects only public scholarship information, no personal data
-- Does not bypass logins, captchas or access controls
-- Uses aggregators only as signposts to official pages, never as a data source
-
----
-
-## 20. Assignment requirements mapping
-
-| Requirement | Where it is implemented |
-|---|---|
-| Discover → Crawl → Extract → Verify → Score → Store → Update | `crawler/pipeline.py` orchestrates all stages |
-| Official source identification | `classify.py`, `official_source_url`, `source_type` |
-| Aggregators not authoritative | `classify.py` (never stored), `discover.py` (outlinks only) |
-| Evidence for every field | `evidence` table, `verify.validate_fields` |
-| Confidence from methodology, not an LLM | `verify.score`, section 8 |
-| VERIFIED only at 95% or above | `verify.score` label rule |
-| Anti-hallucination | Sections 7.4 and 9 |
-| Change detection with old/new/date/source/evidence | `change_log`, `pipeline.upsert` |
-| Expired and stale detection | `compute_status`, `mark_unverifiable` |
-| Working database | SQLite, section 11 |
-| Dashboard with detail, score explanation, history | `app/static/index.html`, section 12 |
-| Not hard-coded discovery | Search + link expansion + depth crawling, section 7.1 |
-| Free tools only | Section 3 |
-
----
 
 ## License
 

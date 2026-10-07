@@ -33,7 +33,7 @@ def allowed(url):
 def _get(url):
     try:
         return S.get(url, timeout=config.REQUEST_TIMEOUT)
-    except requests.exceptions.SSLError:      # some gov sites have broken certificates; read-only public pages
+    except requests.exceptions.SSLError: 
         return S.get(url, timeout=config.REQUEST_TIMEOUT, verify=False)
 
 def parse_page(html, base_url):

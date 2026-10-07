@@ -110,7 +110,7 @@ def run_crawl():
     print("== Discovery ==")
     cands = discover.discover(conn)
     for r in conn.execute("SELECT official_source_url FROM scholarships"):
-        cands.setdefault(r["official_source_url"], "recheck")      # re-verify everything already stored
+        cands.setdefault(r["official_source_url"], "recheck")      
     queue = [(u, v, 0) for u, v in cands.items()]
     seen = set(cands)
     print(f"== Crawling (up to {config.MAX_PAGES} pages, depth {config.MAX_DEPTH}) ==")

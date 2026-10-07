@@ -21,7 +21,7 @@ def classify_url(url):
         return {**base, "source_type": "CORPORATE_CSR", "is_official": 1, "trust": 0.85}
     if any(k in label for k in ("foundation", "trust", "ngo")):
         return {**base, "source_type": "NGO_TRUST", "is_official": 1, "trust": 0.85}
-    return base   # decided later from page content
+    return base
 
 def _label(domain):
     parts = domain.split(".")

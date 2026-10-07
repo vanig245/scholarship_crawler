@@ -38,7 +38,6 @@ def is_listing_page(text):
              if 15 <= len(l) <= 140 and re.search(r"scholarship|fellowship|scheme|yojana", l, re.I)
              and not l.rstrip().endswith(".")]
     return len(items) >= 12
-# field -> (must-match regex, optional second regex that must also match)
 RULES = {
     "income_criteria": (r"income", r"lakh|₹|rs\.?\s?\d|inr|\d{5,}"),
     "age_criteria": (r"\bage\b|years of age|\baged\b|years old", r"\d{2}"),
@@ -164,7 +163,6 @@ def extract(page):
         if q:
             F[f] = {"value": q, "quote": q}
 
-    # application link (taken from the page's own anchors, so it can't be invented)
     best = None
     for href, label in page["links"]:
         if re.search(r"\bapply\b|application|register|registration", label, re.I) and not href.startswith(("mailto", "javascript")):
@@ -172,7 +170,6 @@ def extract(page):
     if best:
         F["application_url"] = {"value": best[0], "quote": f"[link] {best[1]} -> {best[0]}"}
 
-    # structured, machine-readable eligibility derived ONLY from the quoted sentences
     S = {}
     if "income_criteria" in F:
         S["income_max_inr"] = parse_amount(F["income_criteria"]["quote"])

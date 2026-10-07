@@ -7,7 +7,7 @@ ELIGIBILITY_FIELDS = ["income_criteria", "age_criteria", "gender_criteria", "cat
 
 def quote_in_page(quote, text):
     if quote.startswith(("[metadata]", "[link]")):
-        return True            # taken from page metadata / DOM anchors, not body text
+        return True            
     return norm(quote) in norm(text)
 
 def validate_fields(rec, text):

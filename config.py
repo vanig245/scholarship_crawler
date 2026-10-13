@@ -51,3 +51,14 @@ QUERIES = [
     "Aditya Birla scholarship apply",
     "Infosys Foundation scholarship apply",
 ]
+
+
+
+
+requests
+beautifulsoup4
+lxml
+ddgs
+python-dateutil
+fastapi
+uvicorn

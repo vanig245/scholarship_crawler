@@ -8,6 +8,9 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(HERE)
 sys.path.append(ROOT)
 import config
+import db
+os.makedirs(os.path.join(ROOT, "data"), exist_ok=True)
+db.init_db()
 
 app = FastAPI(title="Scholarship Intelligence API")
 app.mount("/static", StaticFiles(directory=os.path.join(HERE, "static")), name="static")
